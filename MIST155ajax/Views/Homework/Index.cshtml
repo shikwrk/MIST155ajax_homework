@@ -1,0 +1,83 @@
+﻿<h1>Index</h1>
+
+<div id="sites" class="row row-cols-1 row-cols-md-3 g-4">
+@*     <div class="col">
+        <div class="card h-100">
+            <img src="..." class="card-img-top" alt="...">
+            <div class="card-body">
+                <h5 class="card-title">Card title</h5>
+                <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+            </div>
+            <div class="card-footer">
+                <small class="text-body-secondary">Last updated 3 mins ago</small>
+            </div>
+        </div>
+    </div>
+    <div class="col">
+        <div class="card h-100">
+            <img src="..." class="card-img-top" alt="...">
+            <div class="card-body">
+                <h5 class="card-title">Card title</h5>
+                <p class="card-text">This card has supporting text below as a natural lead-in to additional content.</p>
+            </div>
+            <div class="card-footer">
+                <small class="text-body-secondary">Last updated 3 mins ago</small>
+            </div>
+        </div>
+    </div>
+    <div class="col">
+        <div class="card h-100">
+            <img src="..." class="card-img-top" alt="...">
+            <div class="card-body">
+                <h5 class="card-title">Card title</h5>
+                <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This card has even longer content than the first to show that equal height action.</p>
+            </div>
+            <div class="card-footer">
+                <small class="text-body-secondary">Last updated 3 mins ago</small>
+            </div>
+        </div>
+    </div> *@
+</div>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+@section Scripts {
+    <script src="~/js/travel.js"></script>
+    <script>
+
+        const datas = spots.CommonFormat.Section.map(spot => {
+            // function isArray(obj) {
+            //     return Object.prototype.toString.call(obj) === '[object Array]';
+            // }
+
+            // // 使用方式
+            // const isSpotImgArray = isArray(spot.file.img);
+
+            const img = Array.isArray(spot.file.img) ? spot.file.img[0].text : spot.file.img.text;
+            let content = spot.xbody;
+            if (spot.xbody.length > 20) {
+                content = spot.xbody.slice(0, 40) + "...";
+            }
+
+            return(
+            `<div class="col">
+                <div class="card h-100">
+                        <img src="${img}" class="card - img - top" alt="...">
+                    <div class="card-body">
+                        <h5 class="card-title">${spot.stitle}</h5>
+                        <p class="card-text">${content}</p>
+                    </div>
+                    <div class="card-footer">
+                                <small class="text-body-secondary">${spot.xpostDate}</small>
+                    </div>
+                </div>
+            </div>`)
+        });
+
+        document.querySelector('#sites').innerHTML = datas.join("")
+
+        console.log(spots.CommonFormat.Section);
+    </script>
+}
