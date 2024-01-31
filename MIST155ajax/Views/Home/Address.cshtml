@@ -41,6 +41,16 @@
             const optDistricts = datas.map(district => `<option value="${district}">${district}</option>`);
 
             selDistrict.innerHTML = optDistricts.join("");
+
+            const district = selDistrict.options[selDistrict.selectedIndex].value;
+            const url2 = `@Url.Content("~/api/road")?siteId=${district}`;
+            const response2 = await fetch(url2);
+            const datas2 = await response2.json();
+
+            const optRoads = datas2.map(road => `<option value="${road}">${road}</option>`);
+
+            selRoad.innerHTML = optRoads.join("");
+
         }
 
         selCity.addEventListener('change', loadDistricts);
