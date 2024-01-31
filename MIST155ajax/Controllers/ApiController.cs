@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MIST155ajax.Models;
+using MIST155ajax.Models.DTO;
 using System.Text;
 
 namespace MIST155ajax.Controllers
@@ -19,13 +20,13 @@ namespace MIST155ajax.Controllers
             return Content("你好阿", "text/plain", Encoding.UTF8);
         }
 
-        public IActionResult Register(string name, int age = 28)
+        public IActionResult Register(UserDTO user)
         {
-            if (string.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(user.Name))
             {
-                name = "guest";
+                user.Name = "guest";
             }
-            return Content($"Hello{name},{ age}歲了","text/plain",Encoding.UTF8);
+            return Content($"Hello{user.Name},{ user.Age}歲了, ,電子郵件是 {user.Email}","text/plain",Encoding.UTF8);
         }
 
         // 檢查名字是否重複
@@ -59,5 +60,18 @@ namespace MIST155ajax.Controllers
             }
             return NotFound();
         }
+
+        public IActionResult District(string city = "台北市")
+        {
+            var districts = _context.Addresses.Where(a => a.City == city).Select(a => a.SiteId).Distinct();
+            return Json(districts);
+        }
+
+        public IActionResult Road(string siteId = "")
+        {
+            var roads = _context.Addresses.Where(a => a.SiteId == siteId).Select(a => a.Road).Distinct();
+            return Json(roads);
+        }
+
     }
 }
