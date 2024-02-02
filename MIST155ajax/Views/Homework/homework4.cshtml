@@ -1,0 +1,215 @@
+﻿
+@{
+    ViewData["Title"] = "homework4";
+}
+<h1>台北市景觀</h1>
+<div class="mb-2" style="display: flex; justify-content: space-between;">
+    <div style="display: flex">
+        <select class="form-select h-75" id="pageSize"></select>
+        <nav aria-label="Page navigation example">
+        </nav>
+        <ul class="pagination mx-2" id="ul1">
+        </ul>
+    </div>
+    <div style="display: flex">
+        <select class="form-select h-75 mx-2 mb-2" id="sortby">
+            <option value="categoryIdAsc">景點編號升冪</option>
+            <option value="categoryIdDesc">景點編號降冪</option>
+            <option value="spotTitleAsc">景點名稱升冪</option>
+            <option value="spotTitleDesc">景點名稱降冪</option>
+        </select>
+        <input type="search" class="form-control h-75" placeholder="景點搜尋" id="inputKeyword" /><br />
+
+    </div>
+</div>
+<div class="flex-lg-row" >
+
+    <nav aria-label="...">
+        <ul class="pagination pagination-lg " id="uls">
+            <li class="page-item active w-100" aria-current="page"><a href="#" class="list-group-item list-group-item-action" data-value="1">養生<br />溫泉</a></li>
+            <li class="page-item w-100"><a href="#" class="list-group-item list-group-item-action" data-value="2">藍色<br />公路</a></li>
+            <li class="page-item w-100"><a href="#" class="list-group-item list-group-item-action" data-value="3">歷史<br />建築</a></li>
+            <li class="page-item w-100"><a href="#" class="list-group-item list-group-item-action" data-value="4">藝文<br />館所</a></li>
+            <li class="page-item w-100"><a href="#" class="list-group-item list-group-item-action" data-value="5">單車<br />追蹤</a></li>
+            <li class="page-item w-100"><a href="#" class="list-group-item list-group-item-action" data-value="6">戶外<br />踏青</a></li>
+            <li class="page-item w-100"><a href="#" class="list-group-item list-group-item-action" data-value="7">宗教<br />信仰</a></li>
+            <li class="page-item w-100"><a href="#" class="list-group-item list-group-item-action" data-value="8">其<br />他</a></li>
+            <li class="page-item w-100"><a href="#" class="list-group-item list-group-item-action" data-value="9">親子<br />共遊</a></li>
+            <li class="page-item w-100"><a href="#" class="list-group-item list-group-item-action" data-value="10">公共<br />藝術</a></li>
+            <li class="page-item w-100"><a href="#" class="list-group-item list-group-item-action" data-value="11">春季<br />活動</a></li>
+
+        </ul>
+    </nav>
+@*     <div class="list-group pagination pagination-lg mx-2 my-2" id="uls">
+        <a href="#" class="list-group-item list-group-item-action" data-value="1">養生溫泉</a>
+        <a href="#" class="list-group-item list-group-item-action" data-value="2">藍色公路</a>
+        <a href="#" class="list-group-item list-group-item-action" data-value="3">歷史建築</a>
+        <a href="#" class="list-group-item list-group-item-action" data-value="4">藝文館所</a>
+        <a href="#" class="list-group-item list-group-item-action" data-value="5">單車追蹤</a>
+        <a href="#" class="list-group-item list-group-item-action" data-value="6">戶外踏青</a>
+        <a href="#" class="list-group-item list-group-item-action" data-value="7">宗教信仰</a>
+        <a href="#" class="list-group-item list-group-item-action" data-value="8">其他</a>
+        <a href="#" class="list-group-item list-group-item-action" data-value="9">親子共遊</a>
+        <a href="#" class="list-group-item list-group-item-action" data-value="10">公共藝術</a>
+        <a href="#" class="list-group-item list-group-item-action" data-value="11">春季活動</a>
+    </div> *@
+</div>
+
+<div class="row row-cols-1 row-cols-md-3 g-4" id="div1"></div>
+
+    @section Scripts {
+        <script>
+            const div1 = document.querySelector('#div1');
+            const ulPaging = document.querySelector('#ul1');
+            const selectPageSize = document.querySelector('#pageSize')
+            const inpKeyword = document.querySelector('#inputKeyword');
+            const sortby = document.querySelector('#sortby');
+            const divResult = document.querySelector('#divResult');
+            const uls = document.querySelector('#uls');
+
+
+            const searchData = {
+                "categoryId": 0,
+                "keyword": "北投",
+                "page": 1,
+                "pageSize": 9,
+                "sortType": "asc",
+                "sortBy": ""
+            };
+            (async () => {
+                let selectItem = [];
+                for (let count = 6; count <= 9; count++) {
+                    selectItem.push( `<option value="${count}">每頁${count}筆資料</option>`);
+                }
+                 selectPageSize.innerHTML =  selectItem.join("");
+                selectPageSize.selectedIndex = 3;
+            })();
+
+
+            selectPageSize.addEventListener(
+                'change', async () => {
+                searchData.pageSize = await parseInt(selectPageSize.value);
+                    loadSpots();
+                }
+            )
+
+            const loadSpots = async () => {
+                const response = await fetch('@Url.Content("~/api/spots")', {
+                    "method": "POST",
+                    "body": JSON.stringify(searchData),
+                    "headers": { "Content-Type": "application/json" }
+                });
+                const datas = await response.json();
+                console.log(datas);
+
+                //顯示
+                const divSpots = datas.spotsResult.map(spot => {
+                    const { spotId, spotTitle, spotImage, address, spotDescription } = spot;
+                    return (`
+                                               <div class="col">
+                                    <div class="card h-100">
+                                        <img src="${spotImage}" class="card-img-top" alt="${spotTitle}">
+                                        <div class="card-body">
+                                                  <h5 class="card-title">${spotId} - ${spotTitle}</h5>
+                                                   <p class="card-text">${spotDescription.length <= 100 ? spotDescription : spotDescription.substring(0, 100)}</p>
+                                        </div>
+                                        <div class="card-footer">
+                                                    <small class="text-body-secondary">${address}</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                    `)
+                })
+
+                div1.innerHTML = divSpots.join("");
+
+                //分頁
+                // console.log(datas.totalPages);
+                let liPaging = "";
+                for (let i = 1, max = datas.totalPages; i <= max; i++) {
+                    liPaging += ` <li class="page-item" onclick="pagingHandler(${i})"><a class="page-link" href="#">${i}</a></li>`
+                }
+                ulPaging.innerHTML = liPaging;
+
+            };
+
+            const pagingHandler = page => {
+                searchData.page = page;
+                loadSpots();
+            }
+
+        //搜尋推薦
+        inpKeyword.addEventListener('input', async (event) => {
+            // console.log(event.target.value);
+            const response = await fetch(`@Url.Content("~/api/SpotTitle")?title=${event.target.value}`)
+            const datas = await response.json();
+
+            const atitles = datas.map(title => ` <a onclick="clickHandler('${title}')" href="#" class="list-group-item list-group-item-action">${title}</a>`);
+            ul1.innerHTML = atitles.join("");
+        })
+
+        const clickHandler = title => {
+            inpSearch.value = title;
+            ul1.innerHTML = "";
+        }
+        const clickHandlerCat = title => {
+            inpSearch.value = title;
+            ul1.innerHTML = "";
+        }
+        //關鍵字搜尋
+        inpKeyword.addEventListener('keydown', event => {
+            // console.log(event.which); //Enter => 13
+            if (event.which === 13) {
+                searchData.keyword = event.target.value;
+                searchData.page = 1;
+                loadSpots();
+            }
+        })
+
+        //升冪降冪判斷
+        sortby.addEventListener('change', event => {
+            // console.log(event.which); //Enter => 13
+            switch (sortby.value) {
+                case "spotTitleAsc":
+                    searchData.sortBy = "spotTitle";
+                    searchData.sortType = "asc";
+                    loadSpots();
+                    break;
+                case "spotTitleDesc":
+                    searchData.sortBy = "spotTitle";
+                    searchData.sortType = "desc";
+                    loadSpots(); 
+                    break;
+                case "categoryIdAsc":
+                    searchData.sortBy = "categoryId";
+                    searchData.sortType = "asc";
+                    loadSpots();
+                    break;
+                case "categoryIdDesc":
+                    searchData.sortBy = "categoryId";
+                    searchData.sortType = "desc";
+                    loadSpots(); 
+                    break;
+                default: //spotId
+                    searchData.sortBy = "spotTitle";
+                    searchData.sortType = "asc";
+                    loadSpots();
+                    break;
+            }
+        })
+
+        uls.addEventListener(
+            "click",
+            async (event) => {
+
+                console.log("end");
+                searchData.categoryId = await parseInt(event.target.getAttribute("data-value"));
+                searchData.keyword = await inpKeyword.value;
+                console.log(searchData.categoryId);
+                loadSpots();
+            }  
+        )
+            loadSpots();
+
+        </script>
+    }

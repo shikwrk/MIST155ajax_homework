@@ -1,13 +1,14 @@
-﻿﻿
+﻿
 @{
-    ViewData["Title"] = "Register";
+    ViewData["Title"] = "homework2";
 }
 
-<h1>Register</h1>
+<h1>homework2</h1>
+
 <div class="row">
     <div class="col-3"></div>
     <div class="col-6">
-        <form id="userForm" >
+        <form id="userForm" enctype="">
             <div class="mb-3">
                 <label for="userName" class="form-label">姓名：</label>
                 <input type="text" class="form-control" id="userName" name="Name">
@@ -37,10 +38,21 @@
 @section Scripts {
     <script>
         const btnSubmit = document.querySelector('#button1');
-        // const txtName = document.querySelector('#userName');
-        // const txtEmail = document.querySelector('#UserEmail');
-        // const txtAge = document.querySelector('#userAge');
+        const txtName = document.querySelector('#userName');
+        const txtEmail = document.querySelector('#UserEmail');
+        const txtAge = document.querySelector('#userAge');
         const divInfo = document.querySelector('#div1');
+
+        const divWarning = document.querySelector("#divWarning");
+
+        txtName.addEventListener('blur', async () => {
+            const username = txtName.value;
+            const url = `@Url.Content("~/api/CheckAccount")?name=${username}`;   //調用檢查名字的api
+            const response = await fetch(url);
+            const data = await response.text();
+            console.log(data);
+            divWarning.innerHTML = data;
+        });
 
         btnSubmit.addEventListener('click', async (event) => {
             event.preventDefault(); //停止預設行為
@@ -71,8 +83,6 @@
             // divInfo.innerHTML = data;
 
         })
-
-
 
         // (async() => {
         //  const url = '@Url.Content("~/api/register")?name=Tom&age=30&email=Tom@company.com';

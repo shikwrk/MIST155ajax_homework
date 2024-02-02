@@ -1,7 +1,15 @@
-﻿<h1>Index</h1>
-
+﻿<h1>台北市景觀</h1>
+<div style="display: flex; justify-content: space-between;">
+    <div style="display: flex">
+        <nav aria-label="Page navigation example">
+            <ul class="pagination mx-2" id="ul1"></ul>
+        </nav>
+    </div>
+    <div style="display: flex">
+        <input type="search" class="form-control h-75" placeholder="景點搜尋" id="inputKeyword" />
+    </div>
+</div>
 <div id="sites" class="row row-cols-1 row-cols-md-3 g-4">
-
 </div>
 
 @{
@@ -23,27 +31,29 @@
 
             // 使用Array內建的isArray
             const img = Array.isArray(spot.file.img) ? spot.file.img[0].text : spot.file.img.text;
-
+            const id = spot.RowNumber;
             // 用三元運算子
-            let content = spot.xbody.length <= 60  ? spot.xbody : spot.xbody.slice(0, 60) + "..."; 
+            let content = spot.xbody.length <= 100  ? spot.xbody : spot.xbody.slice(0, 100) + "..."; 
 
             // if (spot.xbody.length > 60) {
             //     content = spot.xbody.slice(0, 60) + "...";
             // }
 
             return(
-            `<div class="col">
+            `
+            <div class="col">
                 <div class="card h-100">
                         <img src="${img}"   class="card - img - top" alt="...">
                     <div class="card-body">
-                        <h5 class="card-title">${spot.stitle}</h5>
+                        <h5 class="card-title">${id} - ${spot.stitle}</h5>
                         <p class="card-text">${content}</p>
                     </div>
                     <div class="card-footer">
-                                <small class="text-body-secondary">${spot.xpostDate}</small>
+                                <small class="text-body-secondary">${spot.address}</small>
                     </div>
                 </div>
-            </div>`)
+            </div>
+            `)
         });
 
         document.querySelector('#sites').innerHTML = datas.join("")

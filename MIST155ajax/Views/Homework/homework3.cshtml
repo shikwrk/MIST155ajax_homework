@@ -1,13 +1,14 @@
-﻿﻿
+﻿
 @{
-    ViewData["Title"] = "Register";
+    ViewData["Title"] = "homework3";
 }
 
-<h1>Register</h1>
+<h1>homework3</h1>
+
 <div class="row">
     <div class="col-3"></div>
     <div class="col-6">
-        <form id="userForm" >
+        <form id="userForm" enctype="">
             <div class="mb-3">
                 <label for="userName" class="form-label">姓名：</label>
                 <input type="text" class="form-control" id="userName" name="Name">
@@ -16,6 +17,14 @@
             <div class="mb-3">
                 <label for="UserEmail" class="form-label">電子郵件：</label>
                 <input type="email" class="form-control" id="UserEmail" name="Email">
+            </div>
+            <div class="mb-3">
+                <label for="UserPassword" class="form-label">密碼：</label>
+                <input type="password" class="form-control" id="UserPassword" name="Password">
+            </div>
+            <div class="mb-3">
+                <label for="PasswordCheck" class="form-label">密碼確認：</label>
+                <input type="password" class="form-control" id="PasswordCheck" name="PasswordCheck">
             </div>
             <div class="mb-3">
                 <label for="userAge" class="form-label">年紀：</label>
@@ -37,10 +46,23 @@
 @section Scripts {
     <script>
         const btnSubmit = document.querySelector('#button1');
-        // const txtName = document.querySelector('#userName');
-        // const txtEmail = document.querySelector('#UserEmail');
-        // const txtAge = document.querySelector('#userAge');
+        const txtName = document.querySelector('#userName');
+        const txtEmail = document.querySelector('#UserEmail');
+        const txtPassword= document.querySelector('#UserPassword');
+        const txtPasswordCheck = document.querySelector('#PasswordCheck');
+        const txtAge = document.querySelector('#userAge');
         const divInfo = document.querySelector('#div1');
+
+        const divWarning = document.querySelector("#divWarning");
+
+        txtName.addEventListener('blur', async () => {
+            const username = txtName.value;
+            const url = `@Url.Content("~/api/CheckAccount")?name=${username}`;   //調用檢查名字的api
+            const response = await fetch(url);
+            const data = await response.text();
+            console.log(data);
+            divWarning.innerHTML = data;
+        });
 
         btnSubmit.addEventListener('click', async (event) => {
             event.preventDefault(); //停止預設行為
@@ -48,6 +70,11 @@
             // console.log(txtEmail.value);
             // console.log(txtAge.value);
 
+            //檢查密碼與確認密碼是否相等
+            if (txtPassword.value !== txtPasswordCheck.value) {
+                divInfo.innerHTML = '密碼與確認密碼不符，請重新輸入!';
+                return; 
+            }
             //FormData
             const formData = new FormData(document.querySelector('#userForm'));
             // formData.append("key", "123");
@@ -56,13 +83,14 @@
             //     console.log(pair[0]);
             //     console.log(pair[1]);
             // }
+
             const url = '@Url.Content("~/api/register")';
             const response = await fetch(url, {
                 "method": "POST",
                 "body": formData
             });
             const data = await response.text();
-            divInfo.innerHTML = data;
+            divInfo.innerHTML = "成功註冊!";
 
 
             // const url = `@Url.Content("~/api/register")?name=${txtName.value}&age=${txtAge.value}&email=${txtEmail.value}`;
@@ -71,8 +99,6 @@
             // divInfo.innerHTML = data;
 
         })
-
-
 
         // (async() => {
         //  const url = '@Url.Content("~/api/register")?name=Tom&age=30&email=Tom@company.com';
